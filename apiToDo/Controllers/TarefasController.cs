@@ -3,6 +3,8 @@ using apiToDo.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Web.Http;
+using System.Collections.Generic;
 
 namespace apiToDo.Controllers
 {
@@ -10,10 +12,18 @@ namespace apiToDo.Controllers
     [Route("[controller]")]
     public class TarefasController : ControllerBase
     {
+        private Tarefas _tarefas;
+        public TarefasController(){
+            _tarefas= new Tarefas();
+        }
         [Authorize]
         [HttpPost("lstTarefas")]
         public ActionResult lstTarefas()
-        {
+        {   
+            var tarefas = _tarefas.lstTarefas();
+
+        return Ok(tarefas);//Contém o método lsTarefas que retorna a lista de tarefas.
+
             try
             {
               
@@ -28,7 +38,11 @@ namespace apiToDo.Controllers
 
         [HttpPost("InserirTarefas")]
         public ActionResult InserirTarefas([FromBody] TarefaDTO Request)
-        {
+        {   
+            _tarefas.InserirTarefa(tarefa);
+            var tarefas = _tarefas.lstTarefas();
+            return Ok(tarefas); //Contém o método InserirTarefa que adiciona uma nova tarefa.
+
             try
             {
 
@@ -46,6 +60,10 @@ namespace apiToDo.Controllers
         [HttpGet("DeletarTarefa")]
         public ActionResult DeleteTask([FromQuery] int ID_TAREFA)
         {
+            _tarefas.DeletarTarefa(ID_TAREFA);
+            var tarefas = _tarefas.lstTarefas();
+            return Ok(tarefas); //Contém o método DeletarTarefa que remove uma tarefa pelo seu ID.
+
             try
             {
 
