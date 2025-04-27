@@ -2,10 +2,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace apiToDo
 {
@@ -20,7 +16,9 @@ namespace apiToDo
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder
+                        .UseStartup<Startup>()  // Usa a classe Startup
+                        .UseUrls("http://localhost:5000"); // Define as URLs para HTTP e HTTPS
                 });
     }
 }
