@@ -5,66 +5,62 @@ using System.Linq;
 
 namespace apiToDo.Models
 {
-    public class Tarefas
+    public class TarefaService
     {
-        public List<TarefaDTO> lstTarefas()
+        private static List<TarefaDTO> _tarefas = new List<TarefaDTO>
         {
-            try
-            {
-                List<TarefaDTO> lstTarefas = new List<TarefaDTO>();
+            new TarefaDTO { ID_TAREFA = 1, DS_TAREFA = "Fazer Compras" },
+            new TarefaDTO { ID_TAREFA = 2, DS_TAREFA = "Fazer Atividade Faculdade" },
+            new TarefaDTO { ID_TAREFA = 3, DS_TAREFA = "Subir Projeto de Teste no GitHub" }
+        };
+        private static int _nextId = 4;
 
-                lstTarefas.Add(new TarefaDTO
-                {
-                    ID_TAREFA = 1,
-                    DS_TAREFA = "Fazer Compras"
-                });
-
-                lstTarefas.Add(new TarefaDTO
-                {
-                    ID_TAREFA = 2,
-                    DS_TAREFA = "Fazer Atividad Faculdade"
-                });
-
-                lstTarefas.Add(new TarefaDTO
-                {
-                    ID_TAREFA = 3,
-                    DS_TAREFA = "Subir Projeto de Teste no GitHub"
-                });
-
-                return new List<TarefaDTO>();
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+        /// <summary>
+        /// Retorna todas as tarefas cadastradas
+        /// </summary>
+        public List<TarefaDTO> ObterTodasTarefas()
+        {
+            return _tarefas;
         }
 
+        /// <summary>
+        /// Adiciona uma nova tarefa
+        /// </summary>
+        public TarefaDTO AdicionarTarefa(TarefaDTO novaTarefa)
+        {
+            if (string.IsNullOrEmpty(novaTarefa.DS_TAREFA))
+                throw new ArgumentException("Descrição da tarefa é obrigatória");
 
-        public void InserirTarefa(TarefaDTO Request)
-        {
-            try
-            {
-                List<TarefaDTO> lstResponse = lstTarefas();
-                lstResponse.Add(Request);
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+            novaTarefa.ID_TAREFA = _nextId++;
+            _tarefas.Add(novaTarefa);
+            return novaTarefa;
         }
-        public void DeletarTarefa(int ID_TAREFA)
+
+        /// <summary>
+        /// Remove uma tarefa existente
+        /// </summary>
+        public void RemoverTarefa(int id)
         {
-            try
-            {
-                List<TarefaDTO> lstResponse = lstTarefas();
-                var Tarefa = lstResponse.FirstOrDefault(x => x.ID_TAREFA == ID_TAREFA);
-                TarefaDTO Tarefa2 = lstResponse.Where(x=> x.ID_TAREFA == Tarefa.ID_TAREFA).FirstOrDefault();
-                lstResponse.Remove(Tarefa2);
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+            var tarefa = _tarefas.FirstOrDefault(t => t.ID_TAREFA == id);
+
+            if (tarefa == null)
+                throw new KeyNotFoundException($"Tarefa com ID {id} não encontrada");
+
+            _tarefas.Remove(tarefa);
+        }
+
+        /// <summary>
+        /// Atualiza uma tarefa existente
+        /// </summary>
+        public TarefaDTO AtualizarTarefa(TarefaDTO tarefaAtualizada)
+        {
+            var tarefaExistente = _tarefas.FirstOrDefault(t => t.ID_TAREFA == tarefaAtualizada.ID_TAREFA);
+
+            if (tarefaExistente == null)
+                throw new KeyNotFoundException($"Tarefa com ID {tarefaAtualizada.ID_TAREFA} não encontrada");
+
+            tarefaExistente.DS_TAREFA = tarefaAtualizada.DS_TAREFA;
+            return tarefaExistente;
         }
     }
 }
